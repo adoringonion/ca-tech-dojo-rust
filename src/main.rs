@@ -2,31 +2,19 @@
 
 #[macro_use]
 extern crate rocket;
+use crate::user::User;
 use rocket_contrib::json;
 use rocket_contrib::json::Json;
 use rocket_contrib::json::JsonValue;
-use serde::Deserialize;
-use serde::Serialize;
 
 mod token;
-
-#[derive(Serialize, Deserialize)]
-struct User {
-    name: String,
-}
-
-impl User {
-    pub fn new(name: &str) -> Self {
-        User {
-            name: name.to_string(),
-        }
-    }
-}
+mod user;
 
 #[post("/create", data = "<new_user>")]
 fn user_create(new_user: Json<User>) -> JsonValue {
+    let token = token::Token::new();
     json!({
-        "token" : token::Token::new().get(),
+        "token" : token.to_string(),
     })
 }
 

@@ -23,7 +23,7 @@ impl Token {
         return Token { value };
     }
 
-    pub fn get(self) -> String {
+    pub fn to_string(self) -> String {
         self.value
     }
 }
