@@ -7,20 +7,21 @@ use rocket::http::Status;
 use rocket_contrib::json;
 use rocket_contrib::json::Json;
 use rocket_contrib::json::JsonValue;
+use token::Token;
 
 mod token;
 mod user;
 
 #[post("/create", data = "<new_user>", format = "json")]
 fn user_create(new_user: Json<User>) -> JsonValue {
-    let token = token::Token::new();
+    let token = Token::generate();
     json!({
         "token" : token.to_string(),
     })
 }
 
-#[get("/get", format = "json")]
-fn user_get() -> Json<User> {
+#[get("/get")]
+fn user_get(token: Token) -> Json<User> {
     Json(User::new("test"))
 }
 
