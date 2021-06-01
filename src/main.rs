@@ -26,7 +26,7 @@ fn user_get(token: Token) -> Json<User> {
 }
 
 #[put("/update", data = "<user>", format = "json")]
-fn user_update(user: Json<User>) -> Status {
+fn user_update(user: Json<User>, token: Token) -> Status {
     Status::Ok
 }
 

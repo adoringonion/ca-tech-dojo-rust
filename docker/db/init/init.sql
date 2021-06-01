@@ -1,0 +1,24 @@
+DROP DATABASE IF EXISTS tech_dojo;
+CREATE DATABASE tech_dojo;
+USE tech_dojo;
+
+
+DROP TABLE IF EXISTS user;
+
+CREATE TABLE user
+(
+    id INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(40) NOT NULL,
+    token_id INT(10) NOT NULL
+);
+
+DROP TABLE IF EXISTS token;
+
+CREATE TABLE token
+(
+    id INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    value VARCHAR(40) NOT NULL
+);
+
+INSERT INTO token (value) VALUES ("test");
+INSERT INTO user (name, token_id) VALUES ("taro", 1);

@@ -1,0 +1,20 @@
+version: "3.8"
+
+volumes:
+  docker-volume:
+
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_PORT: 3306
+      TZ: "Asia/Tokyo"
+    ports:
+      - 3306:3306
+    command: mysqld --upgrade=FORCE
+    volumes:
+      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/db/init:/docker-entrypoint-initdb.d
