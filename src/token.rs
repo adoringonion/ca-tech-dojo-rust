@@ -1,17 +1,13 @@
-use rand::Rng;
+use anyhow::{Result, anyhow};
 use rocket::{
     http::Status,
     request::{self, FromRequest},
     Outcome, Request,
 };
-
-const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ\
-                            abcdefghijklmnopqrstuvwxyz\
-                            0123456789)(*&^%$#@!~";
-const TOKEN_LENGTH: usize = 20;
+use uuid::Uuid;
 
 pub struct Token {
-    value: String,
+    value: Uuid,
 }
 
 #[derive(Debug)]
@@ -20,36 +16,28 @@ pub enum ApiTokenError {
     Invalid,
 }
 
-fn is_valid(key: &str) -> bool {
+fn is_valid(key: &str) -> Result<Token> {
     if key == "" {
-        return false;
+        return Err(anyhow!("null"));
     }
 
-    return true;
+    return Token::new(key);
 }
 
 impl Token {
-    fn new(token: &str) -> Self {
-        Token {
-            value: token.to_string(),
-        }
+    fn new(input: &str) -> Result<Token> {
+        let token = Uuid::parse_str(input)?;
+        Ok(Token { value: token })
     }
 
     pub fn generate() -> Self {
-        let mut rng = rand::thread_rng();
-
-        let value: String = (0..TOKEN_LENGTH)
-            .map(|_| {
-                let idx = rng.gen_range(0..CHARSET.len());
-                CHARSET[idx] as char
-            })
-            .collect();
-
-        return Token { value };
+        return Token {
+            value: Uuid::new_v4(),
+        };
     }
 
     pub fn to_string(self) -> String {
-        self.value
+        self.value.to_string()
     }
 }
 
@@ -58,14 +46,10 @@ impl<'a, 'r> FromRequest<'a, 'r> for Token {
     fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
         let token = request.headers().get_one("x-token");
         match token {
-            Some(token) => {
-                if is_valid(token) {
-                    Outcome::Success(Token::new(token))
-                } else {
-                    Outcome::Failure((Status::Unauthorized, ApiTokenError::Invalid))
-                }
-            }
-
+            Some(token) => match is_valid(token) {
+                Ok(token) => Outcome::Success(token),
+                Err(_) => Outcome::Failure((Status::Unauthorized, ApiTokenError::Invalid)),
+            },
             None => Outcome::Failure((Status::Unauthorized, ApiTokenError::Missing)),
         }
     }
