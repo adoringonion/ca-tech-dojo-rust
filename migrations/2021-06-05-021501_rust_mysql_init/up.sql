@@ -1,9 +1,4 @@
-DROP DATABASE IF EXISTS tech_dojo;
-CREATE DATABASE tech_dojo;
-USE tech_dojo;
-
-
-DROP TABLE IF EXISTS user;
+-- Your SQL goes here
 
 CREATE TABLE user
 (
@@ -11,8 +6,6 @@ CREATE TABLE user
     name VARCHAR(40) NOT NULL,
     token_id INT(10) NOT NULL
 );
-
-DROP TABLE IF EXISTS token;
 
 CREATE TABLE token
 (

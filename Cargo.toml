@@ -11,3 +11,4 @@ rand = "0.8.3"
 diesel = { version = "1.4.4", features = ["mysql"] }
 uuid = { version = "0.8", features = ["serde", "v4"] }
 anyhow = "1.0.40"
+dotenv = "0.15.0"

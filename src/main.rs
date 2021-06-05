@@ -2,16 +2,17 @@
 
 #[macro_use]
 extern crate rocket;
+#[macro_use]
+extern crate diesel;
 use crate::user::User;
 use rocket::http::Status;
 use rocket_contrib::json;
 use rocket_contrib::json::{Json, JsonValue};
 use token::Token;
-use crate::db;
 
+mod db;
 mod token;
 mod user;
-moddb_connection;
 
 #[post("/create", data = "<new_user>", format = "json")]
 fn user_create(new_user: Json<User>) -> JsonValue {
