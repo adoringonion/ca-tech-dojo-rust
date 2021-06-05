@@ -12,13 +12,14 @@ use rocket_contrib::json::{Json, JsonValue};
 use token::Token;
 
 mod db;
+mod repository;
 mod token;
 mod user;
-mod repository;
 
 #[post("/create", data = "<new_user>", format = "json")]
 fn user_create(new_user: Json<User>, db: connection::DbConn) -> JsonValue {
     let token = Token::generate();
+    repository::create_user(new_user.to_model(), &db);
     json!({
         "token" : token.to_string(),
     })
@@ -38,7 +39,9 @@ fn user_update(user: Json<User>, token: Token) -> Status {
 }
 
 fn rocket() -> rocket::Rocket {
-    rocket::ignite().mount("/user", routes![user_create, user_get, user_update])
+    rocket::ignite()
+        .manage(db::connection::establish())
+        .mount("/user", routes![user_create, user_get, user_update])
 }
 
 fn main() {
