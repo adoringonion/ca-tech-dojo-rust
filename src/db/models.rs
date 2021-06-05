@@ -15,5 +15,7 @@ pub struct NewToken {
 #[derive(Queryable, AsChangeset, Debug)]
 #[table_name = "user"]
 pub struct User {
+    pub id: i32,
     pub name: String,
+    pub token_id: i32,
 }
