@@ -19,7 +19,7 @@ mod user;
 #[post("/create", data = "<new_user>", format = "json")]
 fn user_create(new_user: Json<User>, db: connection::DbConn) -> JsonValue {
     let token = Token::generate();
-    repository::create_user(new_user.to_model(), &db);
+    repository::create_user(new_user.0, &token, &db);
     json!({
         "token" : token.to_string(),
     })

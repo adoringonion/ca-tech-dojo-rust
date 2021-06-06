@@ -7,7 +7,7 @@ pub struct NewUser {
     pub token_id: i32,
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Queryable)]
 #[table_name = "token"]
 pub struct NewToken {
     pub value: String,

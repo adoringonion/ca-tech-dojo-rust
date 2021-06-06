@@ -13,4 +13,7 @@ table! {
     }
 }
 
-allow_tables_to_appear_in_same_query!(token, user,);
+allow_tables_to_appear_in_same_query!(
+    token,
+    user,
+);

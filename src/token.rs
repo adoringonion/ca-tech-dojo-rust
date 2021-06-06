@@ -6,6 +6,8 @@ use rocket::{
 };
 use uuid::Uuid;
 
+use crate::db::models::NewToken;
+
 pub struct Token {
     value: Uuid,
 }
@@ -36,8 +38,14 @@ impl Token {
         };
     }
 
-    pub fn to_string(self) -> String {
+    pub fn to_string(&self) -> String {
         self.value.to_string()
+    }
+
+    pub fn to_model(&self) -> NewToken {
+        NewToken {
+            value: self.value.to_string(),
+        }
     }
 }
 
