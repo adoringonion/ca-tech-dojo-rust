@@ -15,7 +15,7 @@ pub type MysqlPool = Pool<ConnectionManager<MysqlConnection>>;
 
 pub fn establish() -> Result<MysqlPool> {
     let manager = ConnectionManager::<MysqlConnection>::new(database_url()?);
-    Pool::new(manager).with_context(|| "Failed to create pool")
+    Ok(Pool::new(manager).with_context(|| "Failed to create pool")?)
 }
 
 fn database_url() -> Result<String> {

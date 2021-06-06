@@ -39,9 +39,13 @@ fn user_update(user: Json<User>, token: Token) -> Status {
 }
 
 fn rocket() -> rocket::Rocket {
-    rocket::ignite()
-        .manage(db::connection::establish())
-        .mount("/user", routes![user_create, user_get, user_update])
+    let connection = db::connection::establish();
+    match connection {
+        Ok(connection) => rocket::ignite()
+            .manage(connection)
+            .mount("/user", routes![user_create, user_get, user_update]),
+        Err(_) => todo!(),
+    }
 }
 
 fn main() {

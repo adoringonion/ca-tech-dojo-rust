@@ -1,9 +1,10 @@
 use super::schema::{token, user};
 
-#[derive(Insertable)]
+#[derive(Insertable, Debug)]
 #[table_name = "user"]
 pub struct NewUser {
     pub name: String,
+    pub token_id: i32,
 }
 
 #[derive(Insertable)]

@@ -18,6 +18,7 @@ impl User {
     pub fn to_model(&self) -> NewUser {
         NewUser {
             name: self.name.clone(),
+            token_id: 1,
         }
     }
 }
