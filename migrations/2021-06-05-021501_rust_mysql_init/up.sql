@@ -4,14 +4,8 @@ CREATE TABLE user
 (
     id INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(40) NOT NULL,
-    token_id INT(10) NOT NULL
+    token VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE token
-(
-    id INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    value VARCHAR(40) NOT NULL
-);
 
-INSERT INTO token (value) VALUES ("test");
-INSERT INTO user (name, token_id) VALUES ("taro", 1);
+INSERT INTO user (name, token) VALUES ("taro", "aaaaa");

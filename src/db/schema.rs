@@ -1,19 +1,7 @@
 table! {
-    token (id) {
-        id -> Integer,
-        value -> Varchar,
-    }
-}
-
-table! {
     user (id) {
         id -> Integer,
         name -> Varchar,
-        token_id -> Integer,
+        token -> Varchar,
     }
 }
-
-allow_tables_to_appear_in_same_query!(
-    token,
-    user,
-);

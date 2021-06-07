@@ -1,0 +1,1 @@
+CREATE DATABASE tech_dojo;
