@@ -15,10 +15,10 @@ impl User {
         }
     }
 
-    pub fn to_model(&self, token_id: i32) -> NewUser {
+    pub fn to_model(&self, token: String) -> NewUser {
         NewUser {
             name: self.name.clone(),
-            token_id,
+            token,
         }
     }
 }

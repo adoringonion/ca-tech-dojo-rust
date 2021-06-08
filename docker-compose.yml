@@ -18,3 +18,12 @@ services:
     volumes:
       - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
       - ./docker/db/init:/docker-entrypoint-initdb.d
+
+  web:
+    build:
+      context: .
+      dockerfile: ./docker/web/Dockerfile
+    environment:
+      DATABASE_URL: mysql://root:password@ca-tech-dojo-rust_db_1:3306/tech_dojo
+    ports:
+      - "8080:8080"

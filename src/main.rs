@@ -5,7 +5,9 @@ extern crate rocket;
 #[macro_use]
 extern crate diesel;
 use crate::user::User;
+use anyhow::Result;
 use db::connection;
+use repository::create_user;
 use rocket::http::Status;
 use rocket_contrib::json;
 use rocket_contrib::json::{Json, JsonValue};
@@ -17,12 +19,12 @@ mod token;
 mod user;
 
 #[post("/create", data = "<new_user>", format = "json")]
-fn user_create(new_user: Json<User>, db: connection::DbConn) -> JsonValue {
+fn user_create(new_user: Json<User>, db: connection::DbConn) -> Result<JsonValue> {
     let token = Token::generate();
-    repository::create_user(new_user.0, &token, &db);
-    json!({
+    create_user(new_user.0, &token, &db)?;
+    Ok(json!({
         "token" : token.to_string(),
-    })
+    }))
 }
 
 #[get("/get")]

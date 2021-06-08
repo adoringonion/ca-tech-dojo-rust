@@ -1,0 +1,6 @@
+target
+docker
+.env
+.gitignore
+docker-compose.yml
+Cargo.lock
