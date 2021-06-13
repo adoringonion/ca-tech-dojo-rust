@@ -4,11 +4,15 @@
 extern crate rocket;
 #[macro_use]
 extern crate diesel;
+use core::time;
+use std::thread;
+
 use crate::user::User;
 use anyhow::Result;
 use db::connection;
 use repository::create_user;
 use rocket::http::Status;
+use rocket::Config;
 use rocket_contrib::json;
 use rocket_contrib::json::{Json, JsonValue};
 use token::Token;
@@ -41,13 +45,30 @@ fn user_update(user: Json<User>, token: Token) -> Status {
 }
 
 fn rocket() -> rocket::Rocket {
-    let connection = db::connection::establish();
-    match connection {
-        Ok(connection) => rocket::ignite()
-            .manage(connection)
-            .mount("/user", routes![user_create, user_get, user_update]),
-        Err(_) => todo!(),
+    let mut retry_count = 0;
+    let db_connection;
+
+    loop {
+        match db::connection::establish() {
+            Ok(connection) => {
+                db_connection = connection;
+                break;
+            }
+            Err(err) => {
+                thread::sleep(time::Duration::from_secs(3));
+                if retry_count < 10 {
+                    println!("{}", err);
+                    retry_count = retry_count + 1;
+                } else {
+                    panic!("Cant connect to DB")
+                }
+            }
+        }
     }
+
+    rocket::ignite()
+        .manage(db_connection)
+        .mount("/user", routes![user_create, user_get, user_update])
 }
 
 fn main() {

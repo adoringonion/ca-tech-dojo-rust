@@ -1,8 +1,5 @@
 version: "3.8"
 
-volumes:
-  docker-volume:
-
 services:
   db:
     image: mysql:latest
@@ -23,7 +20,11 @@ services:
     build:
       context: .
       dockerfile: ./docker/web/Dockerfile
+    restart: always
+    depends_on:
+      - "db"
     environment:
       DATABASE_URL: mysql://root:password@ca-tech-dojo-rust_db_1:3306/tech_dojo
     ports:
-      - "8080:8080"
+      - "8000:8000"
+    command: ./target/debug/ca-tech-dojo-rust
