@@ -14,6 +14,8 @@ use std::{env, ops::Deref};
 pub type MysqlPool = Pool<ConnectionManager<MysqlConnection>>;
 
 pub fn establish() -> Result<MysqlPool> {
+    println!("Try to connect DB...");
+    println!("DB_URL {}", database_url()?);
     let manager = ConnectionManager::<MysqlConnection>::new(database_url()?);
     Ok(Pool::new(manager).with_context(|| "Failed to create pool")?)
 }

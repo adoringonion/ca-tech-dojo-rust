@@ -51,12 +51,13 @@ fn rocket() -> rocket::Rocket {
     loop {
         match db::connection::establish() {
             Ok(connection) => {
+                println!("Successed DB Connection");
                 db_connection = connection;
                 break;
             }
             Err(err) => {
                 thread::sleep(time::Duration::from_secs(3));
-                if retry_count < 10 {
+                if retry_count < 5 {
                     println!("{}", err);
                     retry_count = retry_count + 1;
                 } else {

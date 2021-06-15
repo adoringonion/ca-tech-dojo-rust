@@ -5,12 +5,13 @@ services:
     image: mysql:latest
     restart: always
     environment:
+      MYSQL_DATABASE: tech_dojo
       MYSQL_ROOT_USER: root
       MYSQL_ROOT_PASSWORD: password
       MYSQL_PORT: 3306
       TZ: "Asia/Tokyo"
     ports:
-      - 3306:3306
+      - "3306:3306"
     command: mysqld --upgrade=FORCE
     volumes:
       - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
@@ -24,7 +25,9 @@ services:
     depends_on:
       - "db"
     environment:
-      DATABASE_URL: mysql://root:password@ca-tech-dojo-rust_db_1:3306/tech_dojo
+      DATABASE_URL: mysql://root:password@db:3306/tech_dojo
+      ROCKET_ADDRESS: 0.0.0.0
+      ROCKET_PORT: 8000
     ports:
       - "8000:8000"
     command: ./target/debug/ca-tech-dojo-rust
