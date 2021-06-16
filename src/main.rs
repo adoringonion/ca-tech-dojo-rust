@@ -4,15 +4,17 @@
 extern crate rocket;
 #[macro_use]
 extern crate diesel;
+#[macro_use]
+extern crate log;
+
 use core::time;
-use std::thread;
+use std::{env, thread};
 
 use crate::user::User;
 use anyhow::Result;
 use db::connection;
 use repository::create_user;
 use rocket::http::Status;
-use rocket::Config;
 use rocket_contrib::json;
 use rocket_contrib::json::{Json, JsonValue};
 use token::Token;
@@ -45,33 +47,33 @@ fn user_update(user: Json<User>, token: Token) -> Status {
 }
 
 fn rocket() -> rocket::Rocket {
-    let mut retry_count = 0;
-    let db_connection;
-
-    loop {
+    let db_connection = loop {
+        let mut counter = 0;
         match db::connection::establish() {
             Ok(connection) => {
-                println!("Successed DB Connection");
-                db_connection = connection;
-                break;
+                info!("Successed DB Connection");
+                break connection;
             }
             Err(err) => {
                 thread::sleep(time::Duration::from_secs(3));
-                if retry_count < 5 {
-                    println!("{}", err);
-                    retry_count = retry_count + 1;
+                if counter < 5 {
+                    error!("{}", err);
+                    counter = counter + 1;
                 } else {
                     panic!("Cant connect to DB")
                 }
             }
         }
-    }
+    };
 
     rocket::ignite()
         .manage(db_connection)
         .mount("/user", routes![user_create, user_get, user_update])
 }
 
-fn main() {
+fn main() -> Result<()> {
+    env::set_var("RUST_LOG", "info");
+    env_logger::init();
     rocket().launch();
+    Ok(())
 }
