@@ -26,8 +26,6 @@ services:
       - "db"
     environment:
       DATABASE_URL: mysql://root:password@db:3306/tech_dojo
-      ROCKET_ADDRESS: 0.0.0.0
-      ROCKET_PORT: 8000
     ports:
       - "8000:8000"
     command: ./target/debug/ca-tech-dojo-rust
