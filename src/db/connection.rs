@@ -1,4 +1,5 @@
 use anyhow::{Context, Result};
+use core::time;
 use diesel::{
     mysql::MysqlConnection,
     r2d2::{ConnectionManager, Pool, PooledConnection},
@@ -10,7 +11,7 @@ use rocket::{
     Outcome, Request, State,
 };
 use sqlx::mysql::MySqlPoolOptions;
-use std::{env, ops::Deref};
+use std::{env, ops::Deref, thread};
 
 pub type MysqlPool = Pool<ConnectionManager<MysqlConnection>>;
 
@@ -26,13 +27,36 @@ fn database_url() -> Result<String> {
     Ok(env::var("DATABASE_URL").with_context(|| format!("DATABASE_URL must be set"))?)
 }
 
-pub async fn init() -> Result<sqlx::MySqlPool> {
+async fn init() -> Result<sqlx::MySqlPool> {
     let pool = MySqlPoolOptions::new()
         .max_connections(5)
         .connect(&database_url()?)
         .await?;
 
     Ok(pool)
+}
+
+pub async fn create_db_pool() -> sqlx::MySqlPool {
+    let db_connection = loop {
+        let mut counter = 0;
+        match init().await {
+            Ok(connection) => {
+                info!("Successed DB Connection");
+                break connection;
+            }
+            Err(err) => {
+                thread::sleep(time::Duration::from_secs(3));
+                if counter < 5 {
+                    error!("{}", err);
+                    counter = counter + 1;
+                } else {
+                    panic!("Cant connect to DB")
+                }
+            }
+        }
+    };
+
+    return db_connection;
 }
 
 pub struct DbConn(pub PooledConnection<ConnectionManager<MysqlConnection>>);

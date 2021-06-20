@@ -7,9 +7,9 @@ extern crate diesel;
 #[macro_use]
 extern crate log;
 
-use core::time;
-use std::{env, thread};
+use std::env;
 
+use crate::db::connection::create_db_pool;
 use crate::user::User;
 use anyhow::Result;
 use db::connection;
@@ -46,35 +46,12 @@ fn user_update(user: Json<User>, token: Token) -> Status {
     Status::Ok
 }
 
-async fn rocket() -> sqlx::MySqlPool {
-    let db_connection = loop {
-        let mut counter = 0;
-        match db::connection::init().await {
-            Ok(connection) => {
-                info!("Successed DB Connection");
-                break connection;
-            }
-            Err(err) => {
-                thread::sleep(time::Duration::from_secs(3));
-                if counter < 5 {
-                    error!("{}", err);
-                    counter = counter + 1;
-                } else {
-                    panic!("Cant connect to DB")
-                }
-            }
-        }
-    };
-
-    return db_connection;
-}
-
 #[tokio::main]
 async fn main() -> Result<()> {
     env::set_var("RUST_LOG", "info");
     env_logger::init();
     rocket::ignite()
-        .manage(rocket().await)
+        .manage(create_db_pool().await)
         .mount("/user", routes![user_create, user_get, user_update])
         .launch();
     Ok(())
