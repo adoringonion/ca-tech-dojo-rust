@@ -9,6 +9,7 @@ use rocket::{
     request::{self, FromRequest},
     Outcome, Request, State,
 };
+use sqlx::mysql::MySqlPoolOptions;
 use std::{env, ops::Deref};
 
 pub type MysqlPool = Pool<ConnectionManager<MysqlConnection>>;
@@ -23,6 +24,15 @@ pub fn establish() -> Result<MysqlPool> {
 fn database_url() -> Result<String> {
     dotenv().ok();
     Ok(env::var("DATABASE_URL").with_context(|| format!("DATABASE_URL must be set"))?)
+}
+
+pub async fn init() -> Result<sqlx::MySqlPool> {
+    let pool = MySqlPoolOptions::new()
+        .max_connections(5)
+        .connect(&database_url()?)
+        .await?;
+
+    Ok(pool)
 }
 
 pub struct DbConn(pub PooledConnection<ConnectionManager<MysqlConnection>>);

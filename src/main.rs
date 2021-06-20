@@ -46,10 +46,10 @@ fn user_update(user: Json<User>, token: Token) -> Status {
     Status::Ok
 }
 
-fn rocket() -> rocket::Rocket {
+async fn rocket() -> sqlx::MySqlPool {
     let db_connection = loop {
         let mut counter = 0;
-        match db::connection::establish() {
+        match db::connection::init().await {
             Ok(connection) => {
                 info!("Successed DB Connection");
                 break connection;
@@ -66,14 +66,16 @@ fn rocket() -> rocket::Rocket {
         }
     };
 
-    rocket::ignite()
-        .manage(db_connection)
-        .mount("/user", routes![user_create, user_get, user_update])
+    return db_connection;
 }
 
-fn main() -> Result<()> {
+#[tokio::main]
+async fn main() -> Result<()> {
     env::set_var("RUST_LOG", "info");
     env_logger::init();
-    rocket().launch();
+    rocket::ignite()
+        .manage(rocket().await)
+        .mount("/user", routes![user_create, user_get, user_update])
+        .launch();
     Ok(())
 }
