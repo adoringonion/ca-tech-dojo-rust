@@ -7,9 +7,9 @@ extern crate diesel;
 #[macro_use]
 extern crate log;
 
-use core::time;
-use std::{env, thread};
+use std::env;
 
+use crate::db::connection::db_init;
 use crate::user::User;
 use anyhow::Result;
 use db::connection;
@@ -47,33 +47,18 @@ fn user_update(user: Json<User>, token: Token) -> Status {
 }
 
 fn rocket() -> rocket::Rocket {
-    let db_connection = loop {
-        let mut counter = 0;
-        match db::connection::establish() {
-            Ok(connection) => {
-                info!("Successed DB Connection");
-                break connection;
-            }
-            Err(err) => {
-                thread::sleep(time::Duration::from_secs(3));
-                if counter < 5 {
-                    error!("{}", err);
-                    counter = counter + 1;
-                } else {
-                    panic!("Cant connect to DB")
-                }
-            }
-        }
-    };
-
     rocket::ignite()
-        .manage(db_connection)
+        .manage(db_init())
         .mount("/user", routes![user_create, user_get, user_update])
 }
 
-fn main() -> Result<()> {
+fn log_init() -> () {
     env::set_var("RUST_LOG", "info");
     env_logger::init();
+}
+
+fn main() -> Result<()> {
+    log_init();
     rocket().launch();
     Ok(())
 }
