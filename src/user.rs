@@ -6,7 +6,7 @@ use crate::db::models::User as UserModel;
 
 #[derive(Serialize, Deserialize)]
 pub struct User {
-    name: String,
+    pub name: String,
 }
 
 impl User {

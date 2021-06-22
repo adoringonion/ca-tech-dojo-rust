@@ -21,3 +21,10 @@ pub fn find_user_by_token(input_token: &Token, conn: &MysqlConnection) -> Result
         .first::<UserModel>(conn)?;
     Ok(result)
 }
+
+pub fn update_user(new_name: String, input_token: &Token, conn: &MysqlConnection) -> Result<()> {
+    update(user.filter(token.eq(input_token.to_string())))
+        .set(name.eq(new_name))
+        .execute(conn)?;
+    Ok(())
+}

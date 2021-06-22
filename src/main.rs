@@ -13,8 +13,9 @@ use crate::db::connection::db_init;
 use crate::user::User;
 use anyhow::Result;
 use db::connection;
-use repository::{create_user, find_user_by_token};
+use repository::{create_user, find_user_by_token, update_user};
 use rocket::http::Status;
+
 use rocket_contrib::json;
 use rocket_contrib::json::{Json, JsonValue};
 use token::Token;
@@ -40,8 +41,14 @@ fn user_get(token: Token, db: connection::DbConn) -> Result<Json<User>> {
 }
 
 #[put("/update", data = "<user>", format = "json")]
-fn user_update(user: Json<User>, token: Token) -> Status {
-    Status::Ok
+fn user_update(user: Json<User>, token: Token, db: connection::DbConn) -> Status {
+    match update_user(user.0.name, &token, &db) {
+        Ok(_) => Status::Ok,
+        Err(err) => {
+            error!("{}", err);
+            Status::InternalServerError
+        }
+    }
 }
 
 fn rocket() -> rocket::Rocket {
