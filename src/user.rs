@@ -2,6 +2,7 @@ use serde::Deserialize;
 use serde::Serialize;
 
 use crate::db::models::NewUser;
+use crate::db::models::User as UserModel;
 
 #[derive(Serialize, Deserialize)]
 pub struct User {
@@ -20,5 +21,8 @@ impl User {
             name: self.name.clone(),
             token,
         }
+    }
+    pub fn from_model(model: UserModel) -> Self {
+        User { name: model.name }
     }
 }
