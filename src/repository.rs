@@ -13,18 +13,10 @@ pub fn create_user(new_user: User, new_token: &Token, conn: &MysqlConnection) ->
     Ok(())
 }
 
-pub fn find_by_token(input_token: &Token, conn: &MysqlConnection) -> Option<UserModel> {
-    let result = user
+pub fn find_by_token(input_token: &Token, conn: &MysqlConnection) -> Result<UserModel> {
+    Ok(user
         .filter(token.eq(input_token.to_string()))
-        .first::<UserModel>(conn);
-
-    match result {
-        Ok(result_user) => Some(result_user),
-        Err(e) => {
-            error!("{}", e);
-            None
-        }
-    }
+        .first::<UserModel>(conn)?)
 }
 
 pub fn update_user(new_name: String, input_token: &Token, conn: &MysqlConnection) -> Result<()> {

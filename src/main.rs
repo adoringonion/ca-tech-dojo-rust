@@ -38,11 +38,11 @@ fn user_create(new_user: Json<User>, db: connection::DbConn) -> Result<JsonValue
 #[get("/get")]
 fn user_get(token: Token, db: connection::DbConn) -> Result<Json<User>, NotFound<String>> {
     match find_by_token(&token, &db) {
-        Some(user) => Ok(Json(User::from_model(user))),
-        None => Err(NotFound(format!(
-            "This token is not found: {}",
-            token.to_string()
-        ))),
+        Ok(user) => Ok(Json(User::from_model(user))),
+        Err(err) => {
+            error!("{}: {}", err, token.to_string());
+            Err(NotFound(format!("{}", err)))
+        }
     }
 }
 
