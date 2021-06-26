@@ -5,21 +5,26 @@ use crate::db::schema::user::dsl::*;
 use crate::diesel::*;
 use crate::{db::schema::user, token::Token, user::User};
 use anyhow::Result;
-use diesel::{self, insert_into, MysqlConnection, RunQueryDsl};
 
 pub fn create_user(new_user: User, new_token: &Token, conn: &MysqlConnection) -> Result<()> {
     insert_into(user::table)
         .values(new_user.to_model(new_token.to_string()))
         .execute(conn)?;
-
     Ok(())
 }
 
-pub fn find_user_by_token(input_token: &Token, conn: &MysqlConnection) -> Result<UserModel> {
+pub fn find_by_token(input_token: &Token, conn: &MysqlConnection) -> Option<UserModel> {
     let result = user
         .filter(token.eq(input_token.to_string()))
-        .first::<UserModel>(conn)?;
-    Ok(result)
+        .first::<UserModel>(conn);
+
+    match result {
+        Ok(result_user) => Some(result_user),
+        Err(e) => {
+            error!("{}", e);
+            None
+        }
+    }
 }
 
 pub fn update_user(new_name: String, input_token: &Token, conn: &MysqlConnection) -> Result<()> {

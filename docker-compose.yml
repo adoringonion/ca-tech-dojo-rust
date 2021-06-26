@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   db:
+    platform: linux/x86_64
     image: mysql:latest
     restart: always
     environment:
