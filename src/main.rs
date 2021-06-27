@@ -41,18 +41,22 @@ fn user_get(token: Token, db: connection::DbConn) -> Result<Json<User>, NotFound
         Ok(user) => Ok(Json(User::from_model(user))),
         Err(err) => {
             error!("{}: {}", err, token.to_string());
-            Err(NotFound(format!("{}", err)))
+            Err(NotFound(format!("Token not found")))
         }
     }
 }
 
 #[put("/update", data = "<user>", format = "json")]
-fn user_update(user: Json<User>, token: Token, db: connection::DbConn) -> Status {
+fn user_update(
+    user: Json<User>,
+    token: Token,
+    db: connection::DbConn,
+) -> Result<Status, NotFound<String>> {
     match update_user(user.0.name, &token, &db) {
-        Ok(_) => Status::Ok,
+        Ok(_) => Ok(Status::Ok),
         Err(err) => {
             error!("{}", err);
-            Status::InternalServerError
+            Err(NotFound(format!("Token not found")))
         }
     }
 }
