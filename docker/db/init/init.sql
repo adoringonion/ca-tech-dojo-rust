@@ -10,15 +10,15 @@ CREATE TABLE user
 INSERT INTO user (name, token) VALUES ("taro", "aaaaa");
 
 
-DROP TABLE IF EXISTS character;
+DROP TABLE IF EXISTS game_character;
 
-CREATE TABLE character
+CREATE TABLE game_character
 (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL
 );
 
-INSERT INTO character (name) VALUES ("Oeeee");
+INSERT INTO game_character (name) VALUES ("Oeeee");
 
 
 DROP TABLE IF EXISTS user_character;
