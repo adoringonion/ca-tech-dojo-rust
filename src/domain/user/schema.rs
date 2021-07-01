@@ -6,12 +6,6 @@ table! {
     }
 }
 
-table! {
-    game_character (id) {
-        id -> Integer,
-        name -> Text,
-    }
-}
 
 table! {
     user_has_character (id) {

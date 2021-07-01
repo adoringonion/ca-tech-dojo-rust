@@ -15,7 +15,8 @@ DROP TABLE IF EXISTS game_character;
 CREATE TABLE game_character
 (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+    name VARCHAR(255) NOT NULL,
+    rarity INTEGER
 );
 
 INSERT INTO game_character (name) VALUES ("Oeeee");
