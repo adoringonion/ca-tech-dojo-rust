@@ -9,32 +9,33 @@ extern crate log;
 
 use std::env;
 
-use crate::{db::connection::db_init, user::User};
 use anyhow::Result;
-use db::connection;
-use user_repository::{create_user, find_by_token, update_user};
+use domain::user::{
+    token::Token,
+    user_repository::{create, find_by_token, update},
+    User,
+};
 use rocket::{http::Status, response::status::NotFound};
 
 use rocket_contrib::json;
 use rocket_contrib::json::{Json, JsonValue};
-use token::Token;
+
+use crate::db::{db_init, DbConn};
 
 mod db;
-mod user_repository;
-mod token;
-mod user;
+mod domain;
 
 #[post("/create", data = "<new_user>", format = "json")]
-fn user_create(new_user: Json<User>, db: connection::DbConn) -> Result<JsonValue> {
+fn user_create(new_user: Json<User>, db: DbConn) -> Result<JsonValue> {
     let token = Token::generate();
-    create_user(new_user.0, &token, &db)?;
+    create(new_user.0, &token, &db)?;
     Ok(json!({
         "token" : token.to_string(),
     }))
 }
 
 #[get("/get")]
-fn user_get(token: Token, db: connection::DbConn) -> Result<Json<User>, NotFound<String>> {
+fn user_get(token: Token, db: DbConn) -> Result<Json<User>, NotFound<String>> {
     match find_by_token(&token, &db) {
         Ok(user) => Ok(Json(User::from_model(user))),
         Err(err) => {
@@ -45,12 +46,8 @@ fn user_get(token: Token, db: connection::DbConn) -> Result<Json<User>, NotFound
 }
 
 #[put("/update", data = "<user>", format = "json")]
-fn user_update(
-    user: Json<User>,
-    token: Token,
-    db: connection::DbConn,
-) -> Result<Status, NotFound<String>> {
-    match update_user(user.0.name, &token, &db) {
+fn user_update(user: Json<User>, token: Token, db: DbConn) -> Result<Status, NotFound<String>> {
+    match update(user.0.name, &token, &db) {
         Ok(_) => Ok(Status::Ok),
         Err(err) => {
             error!("{}", err);

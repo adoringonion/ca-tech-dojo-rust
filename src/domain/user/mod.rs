@@ -1,8 +1,12 @@
+mod models;
+mod schema;
+pub mod token;
+pub mod user_repository;
+
 use serde::Deserialize;
 use serde::Serialize;
 
-use crate::db::models::NewUser;
-use crate::db::models::User as UserModel;
+use self::models::{NewUser, User as UserModel};
 
 #[derive(Serialize, Deserialize)]
 pub struct User {
