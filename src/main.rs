@@ -9,20 +9,18 @@ extern crate log;
 
 use std::env;
 
-use crate::db::connection::db_init;
-use crate::user::User;
+use crate::{db::connection::db_init, user::User};
 use anyhow::Result;
 use db::connection;
-use repository::{create_user, find_by_token, update_user};
-use rocket::http::Status;
+use user_repository::{create_user, find_by_token, update_user};
+use rocket::{http::Status, response::status::NotFound};
 
-use rocket::response::status::NotFound;
 use rocket_contrib::json;
 use rocket_contrib::json::{Json, JsonValue};
 use token::Token;
 
 mod db;
-mod repository;
+mod user_repository;
 mod token;
 mod user;
 
