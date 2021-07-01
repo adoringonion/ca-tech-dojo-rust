@@ -21,9 +21,9 @@ CREATE TABLE game_character
 INSERT INTO game_character (name) VALUES ("Oeeee");
 
 
-DROP TABLE IF EXISTS user_character;
+DROP TABLE IF EXISTS user_has_character;
 
-CREATE TABLE user_character
+CREATE TABLE user_has_character
 (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     user_id INTEGER NOT NULL,
