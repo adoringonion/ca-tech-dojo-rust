@@ -28,10 +28,10 @@ pub struct GameCharacterRepositoryImpl {
 impl GameCharacterRepository for GameCharacterRepositoryImpl {
     fn find_by_rarity(&self, other_rarity: Rarity) -> Result<Vec<GameCharacter>> {
         let result = game_character
-            .filter(rarity.eq(0))
+            .filter(rarity.eq(other_rarity as i32))
             .load::<GameCharacterModel>(&self.db_conn)?;
 
-        let aaa: Vec<GameCharacter> = result.into_iter().map(|x| x.aa()).collect();
+        let aaa: Vec<GameCharacter> = result.into_iter().map(|x| x.into()).collect();
         Ok(aaa)
     }
 }

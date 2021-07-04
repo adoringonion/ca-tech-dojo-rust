@@ -28,9 +28,6 @@ pub struct GameCharacterModel {
 }
 
 impl GameCharacterModel {
-    pub fn aa(&self) -> GameCharacter {
-        GameCharacter::new(self.id, self.name.clone(), self.number_to_rarity())
-    }
 
     pub fn number_to_rarity(&self) -> Rarity {
         match self.rarity {
@@ -41,4 +38,11 @@ impl GameCharacterModel {
             _ => panic!("Unexpected number"),
         }
     }
+}
+
+impl Into<GameCharacter> for GameCharacterModel {
+    fn into(self) -> GameCharacter {
+        GameCharacter::new(self.id, self.name.clone(), self.number_to_rarity())
+    }
+
 }

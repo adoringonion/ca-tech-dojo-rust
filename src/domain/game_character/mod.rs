@@ -1,6 +1,3 @@
-pub mod model;
-pub mod schema;
-
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
