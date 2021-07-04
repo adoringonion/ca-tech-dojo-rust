@@ -10,6 +10,8 @@ use dotenv::dotenv;
 use std::{env, thread};
 
 pub type MysqlPool = Pool<ConnectionManager<MysqlConnection>>;
+pub mod models;
+pub mod schema;
 
 fn establish() -> Result<MysqlPool> {
     info!("Try to connect DB...");

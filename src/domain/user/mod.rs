@@ -1,31 +1,25 @@
-pub mod models;
-pub mod schema;
 pub mod token;
 
+use anyhow::Result;
 use serde::Deserialize;
 use serde::Serialize;
 
-use self::models::{NewUser, User as UserModel};
+use self::token::Token;
 
 #[derive(Serialize, Deserialize)]
 pub struct User {
-    pub name: String,
+    id: i32,
+    name: String,
 }
 
 impl User {
-    pub fn new(name: &str) -> Self {
-        User {
-            name: name.to_string(),
-        }
+    pub fn new(id: i32, name: String) -> Self {
+        User { id, name }
     }
+}
 
-    pub fn to_model(&self, token: String) -> NewUser {
-        NewUser {
-            name: self.name.clone(),
-            token,
-        }
-    }
-    pub fn from_model(model: UserModel) -> Self {
-        User { name: model.name }
-    }
+pub trait UserRepository {
+    fn create(&self, name: &String, token: &Token) -> Result<()>;
+    fn find_by_token(&self, token: &Token) -> Result<User>;
+    fn update(&self, new_name: &String, token: &Token) -> Result<()>;
 }

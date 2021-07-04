@@ -3,6 +3,6 @@ use diesel::{
     MysqlConnection,
 };
 
-pub mod user_repository;
+pub mod user_repository_impl;
 
 type PooledMysqlConn = PooledConnection<ConnectionManager<MysqlConnection>>;

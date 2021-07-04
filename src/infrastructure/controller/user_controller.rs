@@ -2,16 +2,20 @@ use anyhow::Result;
 use rocket::{http::Status, response::status::NotFound};
 use rocket_contrib::json;
 use rocket_contrib::json::{Json, JsonValue};
+use serde::{Deserialize, Serialize};
 
+use crate::usecase::user_usecase;
 use crate::{
     domain::user::{token::Token, User},
-    infrastructure::repository::user_repository::UserRepository,
+    infrastructure::repository::user_repository_impl::UserRepositoryImpl,
 };
 
-#[post("/create", data = "<new_user>")]
-pub fn user_create(new_user: Json<User>, user_repository: UserRepository) -> Result<JsonValue> {
-    let token = Token::generate();
-    user_repository.create(new_user.0, &token)?;
+#[post("/create", data = "<user_name>")]
+pub fn user_create(
+    user_name: Json<UserName>,
+    user_repository: UserRepositoryImpl,
+) -> Result<JsonValue> {
+    let token = user_usecase::create_user(&user_name.value, &user_repository)?;
     Ok(json!({
         "token" : token.to_string(),
     }))
@@ -20,10 +24,10 @@ pub fn user_create(new_user: Json<User>, user_repository: UserRepository) -> Res
 #[get("/get")]
 pub fn user_get(
     token: Token,
-    user_repository: UserRepository,
+    user_repository: UserRepositoryImpl,
 ) -> Result<Json<User>, NotFound<String>> {
-    match user_repository.find_by_token(&token) {
-        Ok(user) => Ok(Json(User::from_model(user))),
+    match user_usecase::find_by_token(&token, &user_repository) {
+        Ok(user) => Ok(Json(user)),
         Err(err) => {
             error!("{}: {}", err, token.to_string());
             Err(NotFound(format!("Token not found")))
@@ -31,17 +35,22 @@ pub fn user_get(
     }
 }
 
-#[put("/update", data = "<user>", format = "json")]
+#[put("/update", data = "<user_name>", format = "json")]
 pub fn user_update(
-    user: Json<User>,
+    user_name: Json<UserName>,
     token: Token,
-    user_repository: UserRepository,
+    user_repository: UserRepositoryImpl,
 ) -> Result<Status, NotFound<String>> {
-    match user_repository.update(user.0.name, &token) {
+    match user_usecase::update(&user_name.value, &token, &user_repository) {
         Ok(_) => Ok(Status::Ok),
         Err(err) => {
             error!("{}", err);
             Err(NotFound(format!("Token not found")))
         }
     }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct UserName {
+    value: String,
 }
