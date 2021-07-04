@@ -1,11 +1,8 @@
 use rocket::Rocket;
 
-use crate::infrastructure::framework::controller::{gacha_controller, user_controller};
+use crate::infrastructure::controller::{gacha_controller, user_controller};
 
 use super::db::db_init;
-
-pub mod controller;
-pub mod db_connection;
 
 pub fn rocket_init() {
     let rocket = rocket::ignite().manage(db_init());

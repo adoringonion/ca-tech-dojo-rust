@@ -2,15 +2,12 @@ use anyhow::{Context, Result};
 use core::time;
 use diesel::{
     mysql::MysqlConnection,
-    r2d2::{ConnectionManager, Pool, PooledConnection},
+    r2d2::{ConnectionManager, Pool},
 };
+
 use dotenv::dotenv;
-use rocket::{
-    http::Status,
-    request::{self, FromRequest},
-    Outcome, Request, State,
-};
-use std::{env, ops::Deref, thread};
+
+use std::{env, thread};
 
 pub type MysqlPool = Pool<ConnectionManager<MysqlConnection>>;
 

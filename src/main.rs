@@ -10,7 +10,7 @@ extern crate log;
 use std::env;
 
 use anyhow::Result;
-use infrastructure::framework::rocket_init;
+use infrastructure::rocket::rocket_init;
 
 mod domain;
 mod infrastructure;

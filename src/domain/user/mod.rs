@@ -1,7 +1,6 @@
-mod models;
-mod schema;
+pub mod models;
+pub mod schema;
 pub mod token;
-pub mod user_repository;
 
 use serde::Deserialize;
 use serde::Serialize;
