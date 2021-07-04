@@ -19,7 +19,21 @@ CREATE TABLE game_character
     rarity INTEGER
 );
 
-INSERT INTO game_character (name) VALUES ("Oeeee");
+INSERT INTO game_character (name, rarity) VALUES ("t_chara01", 0);
+INSERT INTO game_character (name, rarity) VALUES ("t_chara02", 0);
+INSERT INTO game_character (name, rarity) VALUES ("t_chara03", 0);
+
+INSERT INTO game_character (name, rarity) VALUES ("t_chara04", 1);
+INSERT INTO game_character (name, rarity) VALUES ("t_chara05", 1);
+INSERT INTO game_character (name, rarity) VALUES ("t_chara06", 1);
+
+INSERT INTO game_character (name, rarity) VALUES ("t_chara07", 2);
+INSERT INTO game_character (name, rarity) VALUES ("t_chara08", 2);
+INSERT INTO game_character (name, rarity) VALUES ("t_chara09", 2);
+
+INSERT INTO game_character (name, rarity) VALUES ("t_chara10", 3);
+INSERT INTO game_character (name, rarity) VALUES ("t_chara11", 3);
+INSERT INTO game_character (name, rarity) VALUES ("t_chara12", 3);
 
 
 DROP TABLE IF EXISTS user_has_character;
@@ -32,4 +46,4 @@ CREATE TABLE user_has_character
     quantity INTEGER NOT NULL
 );
 
-INSERT INTO user_character (user_id, character_id, quantity) VALUES (1, 1, 3);
+INSERT INTO user_has_character (user_id, character_id, quantity) VALUES (1, 1, 3);

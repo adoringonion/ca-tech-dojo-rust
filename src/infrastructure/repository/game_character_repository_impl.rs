@@ -30,8 +30,7 @@ impl GameCharacterRepository for GameCharacterRepositoryImpl {
             .filter(rarity.eq(other_rarity as i32))
             .load::<GameCharacterModel>(&self.db_conn)?;
 
-        let aaa: Vec<GameCharacter> = result.into_iter().map(|x| x.into()).collect();
-        Ok(aaa)
+        Ok(result.into_iter().map(|x| x.into()).collect())
     }
 }
 
