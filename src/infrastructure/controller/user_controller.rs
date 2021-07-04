@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::usecase::user_usecase;
 use crate::{
-    domain::user::{token::Token, User},
+    domain::user::token::Token,
     infrastructure::repository::user_repository_impl::UserRepositoryImpl,
 };
 
@@ -15,7 +15,7 @@ pub fn user_create(
     user_name: Json<UserName>,
     user_repository: UserRepositoryImpl,
 ) -> Result<JsonValue> {
-    let token = user_usecase::create_user(&user_name.value, &user_repository)?;
+    let token = user_usecase::create_user(&user_name.name, &user_repository)?;
     Ok(json!({
         "token" : token.to_string(),
     }))
@@ -25,9 +25,9 @@ pub fn user_create(
 pub fn user_get(
     token: Token,
     user_repository: UserRepositoryImpl,
-) -> Result<Json<User>, NotFound<String>> {
+) -> Result<Json<UserName>, NotFound<String>> {
     match user_usecase::find_by_token(&token, &user_repository) {
-        Ok(user) => Ok(Json(user)),
+        Ok(user) => Ok(Json(UserName { name: user.name })),
         Err(err) => {
             error!("{}: {}", err, token.to_string());
             Err(NotFound(format!("Token not found")))
@@ -41,7 +41,7 @@ pub fn user_update(
     token: Token,
     user_repository: UserRepositoryImpl,
 ) -> Result<Status, NotFound<String>> {
-    match user_usecase::update(&user_name.value, &token, &user_repository) {
+    match user_usecase::update(&user_name.name, &token, &user_repository) {
         Ok(_) => Ok(Status::Ok),
         Err(err) => {
             error!("{}", err);
@@ -52,5 +52,5 @@ pub fn user_update(
 
 #[derive(Serialize, Deserialize)]
 pub struct UserName {
-    value: String,
+    name: String,
 }

@@ -9,7 +9,7 @@ use self::token::Token;
 #[derive(Serialize, Deserialize)]
 pub struct User {
     id: i32,
-    name: String,
+    pub name: String,
 }
 
 impl User {
