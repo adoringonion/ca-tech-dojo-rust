@@ -6,7 +6,6 @@ use rocket::{
 
 use anyhow::Result;
 use diesel::{
-    query_builder::functions::{insert_into, update as diesel_update},
     ExpressionMethods, QueryDsl, RunQueryDsl,
 };
 
@@ -14,7 +13,7 @@ use crate::{
     domain::game_character::{GameCharacter, GameCharacterRepository, Rarity},
     infrastructure::db::{
         models::GameCharacterModel,
-        schema::game_character::{self, dsl::*},
+        schema::game_character::{dsl::*},
         MysqlPool,
     },
 };

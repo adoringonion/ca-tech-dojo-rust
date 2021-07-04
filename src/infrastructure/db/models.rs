@@ -1,3 +1,5 @@
+use num::FromPrimitive;
+
 use crate::domain::game_character::GameCharacter;
 use crate::domain::game_character::Rarity;
 
@@ -27,22 +29,12 @@ pub struct GameCharacterModel {
     pub rarity: i32,
 }
 
-impl GameCharacterModel {
-
-    pub fn number_to_rarity(&self) -> Rarity {
-        match self.rarity {
-            0 => Rarity::SuperUltraRare,
-            1 => Rarity::UltraRare,
-            2 => Rarity::Rare,
-            3 => Rarity::Common,
-            _ => panic!("Unexpected number"),
-        }
-    }
-}
-
 impl Into<GameCharacter> for GameCharacterModel {
     fn into(self) -> GameCharacter {
-        GameCharacter::new(self.id, self.name.clone(), self.number_to_rarity())
+        GameCharacter::new(
+            self.id,
+            self.name.clone(),
+            Rarity::from_i32(self.rarity).unwrap(),
+        )
     }
-
 }
