@@ -5,6 +5,7 @@ use crate::domain::game_character::Rarity;
 
 use super::schema::game_character;
 use super::schema::user;
+use super::schema::user_has_character;
 
 #[derive(Insertable, Debug)]
 #[table_name = "user"]
@@ -37,4 +38,13 @@ impl Into<GameCharacter> for GameCharacterModel {
             Rarity::from_i32(self.rarity).unwrap(),
         )
     }
+}
+
+#[derive(Insertable)]
+#[table_name = "user_has_character"]
+pub struct UserHasCharacter {
+    pub id: i32,
+    pub user_id: i32,
+    pub character_id: i32,
+    pub quantity: i32,
 }
