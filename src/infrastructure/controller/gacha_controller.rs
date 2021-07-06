@@ -4,7 +4,7 @@ use crate::{
         game_character_repository_impl::GameCharacterRepositoryImpl,
         user_repository_impl::UserRepositoryImpl,
     },
-    usecase::user_game_character::draw_and_resister,
+    usecase::user_game_character::draw_and_register,
 };
 use anyhow::Result;
 
@@ -18,11 +18,13 @@ pub fn gacha_draw(
     user_repository: UserRepositoryImpl,
     game_character_repository: GameCharacterRepositoryImpl,
 ) -> Result<Json<GachaResult>> {
-    let results = draw_and_resister(
+    let results = draw_and_register(
         draw_times.times,
+        &token,
         &user_repository,
         &game_character_repository,
     )?;
+
     Ok(Json(GachaResult { results }))
 }
 
