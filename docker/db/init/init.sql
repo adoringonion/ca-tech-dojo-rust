@@ -43,7 +43,8 @@ CREATE TABLE user_has_character
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     user_id INTEGER NOT NULL,
     character_id INTEGER NOT NULL,
-    quantity INTEGER NOT NULL
+    quantity INTEGER NOT NULL,
+    UNIQUE user_character_index (id, user_id, character_id)
 );
 
 INSERT INTO user_has_character (user_id, character_id, quantity) VALUES (1, 1, 3);
