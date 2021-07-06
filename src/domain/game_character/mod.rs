@@ -53,6 +53,10 @@ impl GameCharacter {
     pub fn new(id: i32, name: String, rarity: Rarity) -> Self {
         Self { id, name, rarity }
     }
+
+    pub fn get_id(&self) -> i32 {
+        self.id
+    }
 }
 pub trait GameCharacterRepository {
     fn find_by_rarity(&self, rarity: Rarity) -> Result<Vec<GameCharacter>>;

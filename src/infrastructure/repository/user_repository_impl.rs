@@ -1,7 +1,10 @@
 #![allow(proc_macro_derive_resolution_fallback)]
 
 use crate::{
-    domain::user::{token::Token, User, UserRepository},
+    domain::{
+        game_character::GameCharacter,
+        user::{token::Token, User, UserRepository},
+    },
     infrastructure::db::{
         models::{NewUser, User as UserModel},
         schema::user::{self, dsl::*},
@@ -11,7 +14,9 @@ use crate::{
 
 use anyhow::Result;
 use diesel::{
-    query_builder::functions::{insert_into, update as diesel_update},
+    query_builder::functions::{insert_into, update},
+    sql_query,
+    sql_types::Integer,
     ExpressionMethods, QueryDsl, RunQueryDsl,
 };
 use rocket::{
@@ -47,10 +52,21 @@ impl UserRepository for UserRepositoryImpl {
         Ok(User::new(result.id, result.name))
     }
 
-    fn update(&self, new_name: &String, input_token: &Token) -> Result<()> {
-        diesel_update(user.filter(token.eq(input_token.to_string())))
+    fn update_name(&self, new_name: &String, input_token: &Token) -> Result<()> {
+        update(user.filter(token.eq(input_token.to_string())))
             .set(name.eq(new_name))
             .execute(&self.db_conn)?;
+        Ok(())
+    }
+
+    fn register_character(
+        &self,
+        other_user_id: i32,
+        gacha_result: &Vec<GameCharacter>,
+    ) -> Result<()> {
+        for character in gacha_result {
+            sql_query("INSERT INTO user_has_character  (user_id, character_id, quantity) VALUES (?, ?, 1) ON DUPLICATE KEY UPDATE quantity = quantity + 1").bind::<Integer, _>(other_user_id).bind::<Integer, _>(character.get_id()).execute(&self.db_conn)?;
+        }
         Ok(())
     }
 }

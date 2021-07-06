@@ -13,7 +13,7 @@ pub fn find_by_token(token: &Token, user_repository: &impl UserRepository) -> Re
     Ok(user_repository.find_by_token(token)?)
 }
 
-pub fn update(name: &String, token: &Token, user_repository: &impl UserRepository) -> Result<()> {
-    user_repository.update(name, token)?;
+pub fn update_name(name: &String, token: &Token, user_repository: &impl UserRepository) -> Result<()> {
+    user_repository.update_name(name, token)?;
     Ok(())
 }

@@ -39,12 +39,3 @@ impl Into<GameCharacter> for GameCharacterModel {
         )
     }
 }
-
-#[derive(Insertable)]
-#[table_name = "user_has_character"]
-pub struct UserHasCharacter {
-    pub id: i32,
-    pub user_id: i32,
-    pub character_id: i32,
-    pub quantity: i32,
-}

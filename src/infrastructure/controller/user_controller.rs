@@ -41,7 +41,7 @@ pub fn user_update(
     token: Token,
     user_repository: UserRepositoryImpl,
 ) -> Result<Status, NotFound<String>> {
-    match user_usecase::update(&user_name.name, &token, &user_repository) {
+    match user_usecase::update_name(&user_name.name, &token, &user_repository) {
         Ok(_) => Ok(Status::Ok),
         Err(err) => {
             error!("{}", err);
