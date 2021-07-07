@@ -1,5 +1,4 @@
 use anyhow::Result;
-use rocket::Response;
 use rocket::{http::Status, response::status::NotFound};
 use rocket_contrib::json;
 use rocket_contrib::json::{Json, JsonValue};
@@ -56,14 +55,14 @@ pub fn user_update(
 pub fn character_list_get(
     token: Token,
     user_repository: UserRepositoryImpl,
-) -> Result<Json<UserHasCharacters>, Status> {
+) -> Result<Json<UserHasCharacters>, NotFound<String>> {
     let result = user_usecase::get_character_list(&token, &user_repository);
 
     match result {
         Ok(value) => Ok(Json(UserHasCharacters { characters: value })),
         Err(err) => {
             error!("{}", err);
-            Err(Status::InternalServerError)
+            Err(NotFound(format!("Token not found")))
         }
     }
 }
