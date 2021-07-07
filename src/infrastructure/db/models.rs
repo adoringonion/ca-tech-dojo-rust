@@ -40,7 +40,7 @@ impl Into<GameCharacter> for GameCharacterModel {
     }
 }
 
-#[derive(Queryable)]
+#[derive(Queryable, Debug)]
 pub struct UserHasCharacterModel {
     pub id: i32,
     pub character_id: i32,

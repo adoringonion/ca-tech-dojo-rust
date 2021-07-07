@@ -67,7 +67,7 @@ impl UserRepository for UserRepositoryImpl {
         gacha_result: &Vec<GameCharacter>,
     ) -> Result<()> {
         for character in gacha_result {
-            let sql = "INSERT INTO user_has_character  (user_id, character_id, quantity) VALUES (?, ?, 1) ON DUPLICATE KEY UPDATE quantity = quantity + 1";
+            let sql = "INSERT INTO user_has_character  (user_id, character_id, quantity) VALUES (?, ?, 1) ON DUPLICATE KEY UPDATE id = id, quantity = quantity + 1";
             sql_query(sql)
                 .bind::<Integer, _>(other_user_id)
                 .bind::<Integer, _>(character.get_id())
