@@ -7,8 +7,6 @@ use rocket::{
 
 use crate::domain::user::token::Token;
 
-use super::db::MysqlPool;
-
 #[derive(Debug)]
 pub enum ApiTokenError {
     Missing,
