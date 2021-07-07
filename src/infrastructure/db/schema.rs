@@ -6,7 +6,6 @@ table! {
     }
 }
 
-
 table! {
     user_has_character (id) {
         id -> Integer,
@@ -23,3 +22,6 @@ table! {
         rarity -> Integer,
     }
 }
+
+joinable!(game_character  -> user_has_character (id));
+allow_tables_to_appear_in_same_query!(game_character, user_has_character);

@@ -1,6 +1,7 @@
 pub mod token;
 
 use anyhow::Result;
+use rocket::response::Stream;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -24,9 +25,27 @@ impl User {
     }
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct UserHasCharacter {
+    id: i32,
+    character_id: i32,
+    name: String,
+}
+
+impl UserHasCharacter {
+    pub fn new(id: i32, character_id: i32, name: String) -> Self {
+        UserHasCharacter {
+            id,
+            character_id,
+            name,
+        }
+    }
+}
+
 pub trait UserRepository {
     fn create(&self, name: &String, token: &Token) -> Result<()>;
     fn find_by_token(&self, token: &Token) -> Result<User>;
     fn update_name(&self, new_name: &String, token: &Token) -> Result<()>;
     fn register_character(&self, user_id: i32, gacha_result: &Vec<GameCharacter>) -> Result<()>;
+    fn get_character_list(&self, user_id: i32) -> Result<Vec<UserHasCharacter>>;
 }

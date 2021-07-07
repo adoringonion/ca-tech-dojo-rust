@@ -3,11 +3,13 @@
 use crate::{
     domain::{
         game_character::GameCharacter,
-        user::{token::Token, User, UserRepository},
+        user::{token::Token, User, UserHasCharacter, UserRepository},
     },
     infrastructure::db::{
-        models::{NewUser, User as UserModel},
-        schema::user::{self, dsl::*},
+        models::{NewUser, User as UserModel, UserHasCharacterModel},
+        schema::user::dsl::*,
+        schema::user_has_character,
+        schema::{self, game_character as aaa},
         MysqlPool,
     },
 };
@@ -38,7 +40,7 @@ impl UserRepository for UserRepositoryImpl {
             token: new_token.to_string(),
         };
 
-        insert_into(user::table)
+        insert_into(schema::user::table)
             .values(new_user)
             .execute(&self.db_conn)?;
         Ok(())
@@ -65,9 +67,27 @@ impl UserRepository for UserRepositoryImpl {
         gacha_result: &Vec<GameCharacter>,
     ) -> Result<()> {
         for character in gacha_result {
-            sql_query("INSERT INTO user_has_character  (user_id, character_id, quantity) VALUES (?, ?, 1) ON DUPLICATE KEY UPDATE quantity = quantity + 1").bind::<Integer, _>(other_user_id).bind::<Integer, _>(character.get_id()).execute(&self.db_conn)?;
+            let sql = "INSERT INTO user_has_character  (user_id, character_id, quantity) VALUES (?, ?, 1) ON DUPLICATE KEY UPDATE quantity = quantity + 1";
+            sql_query(sql)
+                .bind::<Integer, _>(other_user_id)
+                .bind::<Integer, _>(character.get_id())
+                .execute(&self.db_conn)?;
         }
         Ok(())
+    }
+
+    fn get_character_list(&self, user_id: i32) -> Result<Vec<UserHasCharacter>> {
+        let result = user_has_character::table
+            .inner_join(aaa::table)
+            .filter(user_has_character::dsl::user_id.eq(user_id))
+            .select((
+                user_has_character::dsl::id,
+                user_has_character::character_id,
+                aaa::dsl::name,
+            ))
+            .load::<UserHasCharacterModel>(&self.db_conn)?;
+
+        Ok(result.into_iter().map(|x| x.into()).collect())
     }
 }
 

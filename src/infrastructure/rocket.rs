@@ -20,5 +20,5 @@ fn router(rocket: Rocket) -> rocket::Rocket {
             ],
         )
         .mount("/gacha", routes![gacha_controller::gacha_draw])
-        .mount("/character", routes![])
+        .mount("/character", routes![user_controller::character_list_get])
 }

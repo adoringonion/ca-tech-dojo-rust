@@ -4,6 +4,7 @@ use rocket_contrib::json;
 use rocket_contrib::json::{Json, JsonValue};
 use serde::{Deserialize, Serialize};
 
+use crate::domain::user::UserHasCharacter;
 use crate::usecase::user_usecase;
 use crate::{
     domain::user::token::Token,
@@ -50,7 +51,22 @@ pub fn user_update(
     }
 }
 
+#[get("/list")]
+pub fn character_list_get(
+    token: Token,
+    user_repository: UserRepositoryImpl,
+) -> Result<Json<UserHasCharacters>> {
+    let result = user_usecase::get_character_list(&token, &user_repository)?;
+
+    Ok(Json(UserHasCharacters { characters: result }))
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct UserName {
     name: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct UserHasCharacters {
+    characters: Vec<UserHasCharacter>,
 }
